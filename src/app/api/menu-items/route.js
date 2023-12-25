@@ -5,6 +5,7 @@ export async function POST (req)
 {
     mongoose.connect(process.env.MONGO_URL);
     const data = await req.json();
+    console.log(data);
     const menuItemDoc = MenuItem.create(data);
     return Response.json(menuItemDoc);
 }
@@ -13,6 +14,7 @@ export async function PUT(req)
 {
     mongoose.connect(process.env.MONGO_URL);
     const {_id, ...data} = await req.json();
+    console.log(typeof(data.category));
     await MenuItem.findByIdAndUpdate(_id, data);
     return Response.json(true);
 }

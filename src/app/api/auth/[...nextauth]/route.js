@@ -9,7 +9,8 @@ import clientPromise from "@/libs/mongoConnect"
 
 
 export const authOptions = {
-  session: {strategy:'jwt'},
+  session: {strategy:'jwt',
+    maxAge: 1000},
   secret: process.env.SECRET,
   callbacks: {
     jwt({token, trigger,session}) {
@@ -24,8 +25,10 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
+        type:'credentials',
         name: 'Credentials',
         credentials: {
           username: { label: "Email", type: "email", placeholder: "test@example.com" },
@@ -35,14 +38,21 @@ export const authOptions = {
         {
           const email = credentials?.email;
           const password = credentials?.password;
+
+          console.log(email);
+          console.log(password);
           
           mongoose.connect(process.env.MONGO_URL);
           const user = await User.findOne({email});
-          const passwordOk = user && bcrypt.compareSync(password, user.password);
+          console.log(user.password);
+          const passwordOk = user && bcrypt.compare(password, user.password);
+
+          console.log(bcrypt.compareSync(password, user.password));
 
           
           if (passwordOk) 
           {
+            console.log(user);
             return user;
           }
           

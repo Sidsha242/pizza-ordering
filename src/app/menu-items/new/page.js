@@ -1,5 +1,5 @@
 'use client'
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import Link from "next/link";
 import Left from "@/components/icons/Left";
 import EditableImage from "@/components/layout/EditableImage"
@@ -22,11 +22,26 @@ export default function NewMenuItemPage() {
 
   const [redirectToItems, setRedirectToItems] = useState(false); //once clicked on save we should go back to list cannot directly redirect must have state
 
+  const [categories, setCategories] = useState([]);
+  const [category,setCategory] = useState('');
+
+  useEffect(() => {
+    fetch('/api/categories').then(res => {
+      res.json().then(categories => {
+            setCategories(categories);
+            setCategory(categories[0]._id); //to give first value ..first value was not loading
+      })
+    })
+
+  },[])
+ 
+ 
+ 
   async function handleFormSubmit(ev)
   {
     ev.preventDefault();
-    const data = { image, name, description, basePrice};
-    console.log(data);
+    console.log(category);
+    const data = { image, name, description, basePrice, category};
     const savingPromise = new Promise(async (resolve, reject) => {
       const response = await fetch('/api/menu-items', {
         method: 'POST',
@@ -51,10 +66,10 @@ export default function NewMenuItemPage() {
     setRedirectToItems(true);
   }
 
-  if(redirectToItems)
-  {
-    return redirect('/menu-items');
-  }
+   if(redirectToItems)
+   {
+     return redirect('/menu-items');
+   }
   
   if(profileLoading)
   {
@@ -98,6 +113,12 @@ export default function NewMenuItemPage() {
               value={basePrice}
               onChange={ev => setBasePrice(ev.target.value)}
               />
+              <label>Category</label>
+              <select value={category} onChange={ev=> setCategory(ev.target.value)}>
+                {categories?.length > 0 && categories.map(c => (
+                  <option key={c._id} value={c._id}>{c.name}</option>
+                ))}
+              </select>
             <button type="submit">Save</button>
           </div>
         </div>
