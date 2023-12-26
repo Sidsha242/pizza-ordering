@@ -5,7 +5,7 @@ const MenuItemSchema = new Schema({
     name: {type: String},
     description : {type: String},
     basePrice: {type: Number},
-    category: {type: String, default: ""},
+    category: {type: String, default: ""}, //can give type as objectId
 }, {timestamps: true})
 
 

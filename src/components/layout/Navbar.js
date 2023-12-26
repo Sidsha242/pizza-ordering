@@ -1,6 +1,8 @@
 'use client';
 import Link from "next/link"
 import {useSession, signOut} from "next-auth/react";
+import { useContext } from "react";
+import { CartContext } from "../AppContext";
 
 export default function Navbar()
 {
@@ -13,6 +15,7 @@ export default function Navbar()
     {
         userName = userName.split(' ')[0]
     }
+    const {cartProducts} = useContext(CartContext)
     return (
         <>
            <header className="flex items-center justify-between">
@@ -42,6 +45,9 @@ export default function Navbar()
                          <Link href={'/login'}>Login</Link>
                          <Link href={'/register'} className="bg-primary rounded-full text-white px-8 py-2">Regsiter</Link>
                          </>
+                    )}
+                    {cartProducts?.length > 0 && (
+                        <Link href={'/cart'}>Cart ({cartProducts.length})</Link>
                     )}
                
                 
